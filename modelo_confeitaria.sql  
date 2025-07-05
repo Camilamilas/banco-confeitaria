@@ -1,0 +1,72 @@
+-- Tabela de categorias de produtos
+CREATE TABLE categorias (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL
+);
+
+-- Tabela de produtos
+CREATE TABLE produtos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    preco REAL NOT NULL,
+    estoque INTEGER NOT NULL,
+    categoria_id INTEGER,
+    FOREIGN KEY (categoria_id) REFERENCES categorias(id)
+);
+
+-- Tabela de clientes
+CREATE TABLE clientes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    telefone TEXT,
+    email TEXT UNIQUE
+);
+
+-- Tabela de pedidos
+CREATE TABLE pedidos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cliente_id INTEGER NOT NULL,
+    produto_id INTEGER NOT NULL,
+    quantidade INTEGER NOT NULL,
+    data_pedido TEXT NOT NULL,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id),
+    FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
+
+-- Tabela de pagamentos
+CREATE TABLE pagamentos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pedido_id INTEGER NOT NULL,
+    forma_pagamento TEXT NOT NULL,
+    valor_pago REAL NOT NULL,
+    FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
+);
+-- Inserir categorias
+INSERT INTO categorias (nome) VALUES ('Bolos');
+INSERT INTO categorias (nome) VALUES ('Doces');
+INSERT INTO categorias (nome) VALUES ('Salgados');
+
+-- Inserir produtos
+INSERT INTO produtos (nome, preco, estoque, categoria_id) VALUES ('Bolo de Chocolate', 30.00, 10, 1);
+INSERT INTO produtos (nome, preco, estoque, categoria_id) VALUES ('Brigadeiro', 2.50, 100, 2);
+
+-- Inserir clientes
+INSERT INTO clientes (nome, telefone, email) VALUES ('Ana Clara', '61999999999', 'ana@email.com');
+
+-- Inserir pedidos
+INSERT INTO pedidos (cliente_id, produto_id, quantidade, data_pedido) VALUES (1, 1, 2, '2025-07-04');
+
+-- Inserir pagamento
+INSERT INTO pagamentos (pedido_id, forma_pagamento, valor_pago) VALUES (1, 'Pix', 60.00);
+
+-- Atualizar estoque
+UPDATE produtos SET estoque = estoque - 2 WHERE id = 1;
+
+-- Remover um produto
+DELETE FROM produtos WHERE id = 2;
+
+-- Consulta com JOIN
+SELECT pedidos.id, clientes.nome AS cliente, produtos.nome AS produto, pedidos.quantidade, pedidos.data_pedido
+FROM pedidos
+JOIN clientes ON pedidos.cliente_id = clientes.id
+JOIN produtos ON pedidos.produto_id = produtos.id;
